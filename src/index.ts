@@ -2,17 +2,14 @@ interface Matcher<R> {
 	doesMatch(row: R): boolean;
 }
 
-interface Finder<K, R> {
+interface Indexable<K, R> {
 	find(index: Map<K, R>): R | undefined;
-}
-
-interface Indexer<R, K> {
-	index(row: R): K;
+	  index(row: R): K;
 }
 
 // R: Row type
 // V: Value type
-class Equals<R, V> implements Matcher<R>, Finder<V, R>, Indexer<R, V> {
+class Equals<R, V> implements Matcher<R>, Indexable<V, R> {
 	readonly getter: (row: R) => V
 	readonly value: V;
 
@@ -46,14 +43,14 @@ const countries: Country[] = [
 
 const byCountryName = new Equals<Country, string>((row) => row.name, "Australia");
 
-console.log(true, byCountryName.doesMatch(countries[0]));
-console.log(false, byCountryName.doesMatch(countries[1]));
+console.log(true === byCountryName.doesMatch(countries[0]));
+console.log(false === byCountryName.doesMatch(countries[1]));
 
-console.log("Australia", byCountryName.index(countries[0]));
-console.log("Canada", byCountryName.index(countries[1]));
+console.log("Australia" === byCountryName.index(countries[0]));
+console.log("Canada" === byCountryName.index(countries[1]));
 
 var index: Map<string, Country> = new Map();
 index.set("Australia", countries[0]);
 
-console.log(countries[0], byCountryName.find(index));
+console.log(countries[0] === byCountryName.find(index));
 
